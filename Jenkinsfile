@@ -1,25 +1,33 @@
 pipeline {
     agent any
 
+    environment {
+        IMAGE_NAME = 'grocery_website'
+    }
+
     stages {
-        stage('Clone Repository') {
+        stage('Checkout SCM') {
             steps {
-                git 'https://github.com/saiganesh1415/grocerywebsite.github.io.git'
+                // This uses the Jenkins default SCM checkout configured in the pipeline job
+                checkout scm
             }
         }
 
         stage('Build Docker Image') {
             steps {
                 script {
-                    docker.build('grocery_website')
+                    docker.build("${IMAGE_NAME}")
                 }
             }
         }
 
         stage('Run Docker Container') {
             steps {
-                sh 'docker-compose up -d'
+                script {
+                    sh 'docker-compose up -d'
+                }
             }
         }
     }
 }
+
