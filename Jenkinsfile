@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                git 'https://github.com/yourusername/Grocerywebsite.github.io.git'
+                git 'https://github.com/saiganesh1415/grocerywebsite.github.io.git'
             }
         }
 
