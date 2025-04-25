@@ -4,10 +4,14 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                // Checkout the source code from your repository
-                git 'https://github.com/saiganesh1415/grocerywebsite.git'
+                // Make sure this uses the correct branch
+                git branch: 'main', url: 'https://github.com/saiganesh1415/grocerywebsite.git'
             }
         }
+        
+        // The rest of your pipeline stages remain the same...
+    }
+}
 
         stage('Build') {
             steps {
