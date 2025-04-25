@@ -4,38 +4,29 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                // Make sure this uses the correct branch
                 git branch: 'main', url: 'https://github.com/saiganesh1415/grocerywebsite.git'
             }
         }
-        
-        // The rest of your pipeline stages remain the same...
-    }
-}
 
         stage('Build') {
             steps {
-                // Build commands for your project
                 sh 'echo "Building the project..."'
-                // Assuming a Node.js application, add the build command
                 sh 'npm install' // Install dependencies
-                sh 'npm run build' // Replace with your build command if different
+                sh 'npm run build' // Build the project
             }
         }
 
         stage('Test') {
             steps {
-                // Run your tests here
                 sh 'echo "Running tests..."'
-                sh 'npm test' // Replace this with your testing command if different
+                sh 'npm test' // Run tests
             }
         }
-        
+
         stage('Deploy') {
             steps {
-                // Add commands to deploy your application
                 echo "Deploying the application..."
-                // Example: sh 'deploy-script.sh' or use appropriate deployment commands
+                // Add your deployment commands here
             }
         }
     }
