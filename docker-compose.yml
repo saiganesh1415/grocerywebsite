@@ -1,8 +1,9 @@
 version: '3.8'
 
 services:
-  grocery_website:
+  frontend-app:
     build: .
+    container_name: frontend-app-container
     ports:
-      - "8081:80"
-    container_name: grocery_site
+      - "8080:80"
+    restart: always
