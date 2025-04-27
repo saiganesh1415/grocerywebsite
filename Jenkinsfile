@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Checkout Code') {
             steps {
-                git url: 'https://github.com/your-username/your-repo.git', branch: 'main'
+                git url: 'https://github.com/saiganesh1415/grocerywebsite.git', branch: 'main'
             }
         }
 
