@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    environment {
+        IMAGE_NAME = 'saiganesh1415/grocery-react-main-frontend:latest'
+    }
+
     stages {
         stage('Checkout Code') {
             steps {
@@ -19,6 +23,32 @@ pipeline {
         stage('Run Docker Compose') {
             steps {
                 sh 'docker-compose up -d --build'
+            }
+        }
+
+        stage('Test Containers') {
+            steps {
+                sh 'docker ps'
+                sh 'docker-compose logs frontend'
+            }
+        }
+
+        stage('Push to Docker Hub') {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub-credentials',
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
+                )]) {
+                    script {
+                        sh """
+                            echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                            docker tag frontend-app-image:latest ${IMAGE_NAME}
+                            docker push ${IMAGE_NAME}
+                            docker logout
+                        """
+                    }
+                }
             }
         }
     }
