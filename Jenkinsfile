@@ -2,41 +2,31 @@ pipeline {
     agent any
 
     stages {
-        stage('Checkout') {
+        stage('Checkout Code') {
             steps {
-                git branch: 'main', url: 'https://github.com/saiganesh1415/grocerywebsite.git'
+                git url: 'https://github.com/your-username/your-repo.git', branch: 'main'
             }
         }
 
-        stage('Build') {
+        stage('Build Docker Image') {
             steps {
-                sh 'echo "Building the project..."'
-                sh 'npm install' // Install dependencies
-                sh 'npm run build' // Build the project
+                script {
+                    docker.build('frontend-app-image')
+                }
             }
         }
 
-        stage('Test') {
+        stage('Run Docker Compose') {
             steps {
-                sh 'echo "Running tests..."'
-                sh 'npm test' // Run tests
-            }
-        }
-
-        stage('Deploy') {
-            steps {
-                echo "Deploying the application..."
-                // Add your deployment commands here
+                sh 'docker-compose up -d --build'
             }
         }
     }
 
     post {
-        success {
-            echo 'Pipeline completed successfully!'
-        }
-        failure {
-            echo 'Pipeline failed!'
+        always {
+            echo 'Cleaning up...'
+            sh 'docker system prune -f'
         }
     }
 }
