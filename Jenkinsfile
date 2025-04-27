@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = 'saiganesh1415/grocery-react-main-frontend:latest'
+        IMAGE_NAME = 'grocerywebsitegithubio-master-grocery_website:latest'
     }
 
     stages {
@@ -36,7 +36,7 @@ pipeline {
         stage('Push to Docker Hub') {
             steps {
                 withCredentials([usernamePassword(
-                    credentialsId: 'dockerhub-credentials',
+                    credentialsId: 'github-token',
                     usernameVariable: 'DOCKER_USER',
                     passwordVariable: 'DOCKER_PASS'
                 )]) {
