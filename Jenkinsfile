@@ -49,7 +49,7 @@ pipeline {
                     script {
                         // Login to Docker Hub
                         sh '''
-                            echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                            echo "$user_password" | docker login -u "$user_name" --password-stdin
                             docker tag frontend-app-image:latest $IMAGE_NAME
                             docker push $IMAGE_NAME
                             docker logout
