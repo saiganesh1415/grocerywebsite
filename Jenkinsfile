@@ -2,54 +2,54 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = 'grocerywebsitegithubio-master-grocery_website:latest'
+        IMAGE_NAME = 'saiganesh1415/grocerywebsitegithubio-master-grocery_website:latest'
     }
 
     stages {
-        // Stage 1: Checkout the code from the Git repository
+        // Stage 1: Checkout code from GitHub using Personal Access Token (stored securely)
         stage('Checkout Code') {
             steps {
-                git url: 'https://github.com/saiganesh1415/grocerywebsite.git', branch: 'main'
+                withCredentials([string(credentialsId: 'github-token', variable: 'GITHUB_TOKEN')]) {
+                    git url: "https://${GITHUB_TOKEN}@github.com/saiganesh1415/grocerywebsite.git", branch: 'main'
+                }
             }
         }
 
-        // Stage 2: Build the Docker image
+        // Stage 2: Build Docker image
         stage('Build Docker Image') {
             steps {
                 script {
-                    // Build Docker image with a custom tag (frontend-app-image)
                     docker.build('frontend-app-image', '.')
                 }
             }
         }
 
-        // Stage 3: Run Docker Compose to start containers
+        // Stage 3: Run Docker Compose
         stage('Run Docker Compose') {
             steps {
-                sh 'docker-compose up -d --build'  // Builds and starts containers in detached mode
+                sh 'docker-compose up -d --build'
             }
         }
 
-        // Stage 4: Test the running containers
+        // Stage 4: Test containers
         stage('Test Containers') {
             steps {
-                sh 'docker ps'  // Display the list of running containers
-                sh 'docker-compose logs frontend'  // Check logs for the frontend service
+                sh 'docker ps'
+                sh 'docker-compose logs frontend'
             }
         }
 
-        // Stage 5: Push the Docker image to Docker Hub
+        // Stage 5: Push image to Docker Hub
         stage('Push to Docker Hub') {
             steps {
                 withCredentials([usernamePassword(
-                    credentialsId: 'dockerhub-credentials',  // Make sure you have this credential ID set in Jenkins
+                    credentialsId: 'dockerhub-credentials',
                     usernameVariable: 'DOCKER_USER',
                     passwordVariable: 'DOCKER_PASS'
                 )]) {
                     script {
-                        // Login to Docker Hub
                         sh '''
-                            echo "$user_password" | docker login -u "$user_name" --password-stdin
+                            echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
                             docker tag frontend-app-image:latest $IMAGE_NAME
                             docker push $IMAGE_NAME
                             docker logout
@@ -62,15 +62,14 @@ pipeline {
 
     post {
         always {
-            // Cleanup resources after the pipeline execution
             echo 'Cleaning up...'
-            sh 'docker system prune -f'  // Clean unused Docker data
+            sh 'docker system prune -f'
         }
         success {
             echo 'Pipeline completed successfully!'
         }
         failure {
-            echo 'Pipeline failed. Please check the logs for more details.'
+            echo 'Pipeline failed. Please check the logs.'
         }
     }
 }
